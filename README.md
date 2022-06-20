@@ -3,4 +3,4 @@ Code to reproduce methods &amp; results from Boiarsky et. al., Nature Communicat
 
 4a_puritywork-published.ipynb contains our analysis of sample purity (% tumor cells in sample) using our Bayesian purity model, as described in our method. 
 
-helper_functions-published.py contains functions that are used throughout the other notebooks included in the repo.
+helper_functions_published.py contains functions that are used throughout the other notebooks included in the repo.
