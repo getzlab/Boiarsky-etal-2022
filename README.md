@@ -5,4 +5,6 @@ Ig_genes.ipynb details how we determined which genes fall in the immunoglobulin 
 
 4a_puritywork-published.ipynb contains our analysis of sample purity (% tumor cells in sample) using our Bayesian purity model, as described in our method. 
 
+4d_limma.ipynb contains our limma-voom differential expression analysis comparing malignant or pre-malignant pseudobulk samples vs. normal pseudobulk samples.
+
 helper_functions_published.py contains functions that are used throughout the other notebooks included in the repo.
