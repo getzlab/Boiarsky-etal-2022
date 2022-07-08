@@ -1,5 +1,5 @@
 # Boiarsky-etal-2022
-Code to reproduce methods &amp; results from Boiarsky et. al., Nature Communications 2022
+Code to reproduce methods &amp; results from Boiarsky et. al., *Nature Communications* 2022
 
 Ig_genes.ipynb details how we determined which genes fall in the immunoglobulin loci, to remove them from downstream analyses.
 
