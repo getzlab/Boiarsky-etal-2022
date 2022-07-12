@@ -27,7 +27,7 @@ other:
 ## To create an anndata object containing our single cell RNAseq data:
 Raw UMI counts & metadata are available on GEO, accession number GSE193531 (this section is being updated, further instructions will be added)
 
-## Notebooks:
+## Analysis notebooks:
 - Ig_genes.ipynb details how we determined which genes fall in the immunoglobulin loci, to remove them from downstream analyses.
 - 4a_puritywork-published.ipynb contains our analysis of sample purity (% tumor cells in sample) using our Bayesian purity model. It also contains the code to generate Fig. 2a from our paper. 
 - 4d_limma.ipynb contains our limma-voom differential expression analysis comparing malignant or pre-malignant pseudobulk samples vs. normal pseudobulk samples.
