@@ -25,7 +25,7 @@ other:
 - limma_3.50.3
 
 ## To create an anndata object containing our single cell RNAseq data:
-Raw UMI counts & metadata are available on GEO, accession number GSE193531
+Raw UMI counts & metadata are available on GEO, accession number GSE193531 (this section is being updated, further instructions will be added)
 
 ## Notebooks:
 - Ig_genes.ipynb details how we determined which genes fall in the immunoglobulin loci, to remove them from downstream analyses.
