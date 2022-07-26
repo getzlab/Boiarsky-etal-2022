@@ -957,7 +957,7 @@ def estimate_purity_lc_only(cell_lightchain_type_df, sample_col, this_sample,
     return rhos, marginals_rho
 
 #plots of gene expression and signature activity per healthy/malig cells per patient
-def plot_per_patient_healthymalig(summary_df, things_to_plot, facet_col='signature', value_col='mean_activity', person_col='person', ds_col="disease_stage", ds_colors=['cornflowerblue', '#F1CE46', '#DC7209', '#880B0B'], ylabel='mean activity', ncols=1, ptsize=6, custom_ylim=None, sharey=False, sharex=False, figsize=None, legend_fontsize="small", filename=None, dpi=150):
+def plot_per_patient_healthymalig(summary_df, things_to_plot, facet_col='signature', value_col='mean_activity', sample_col='person', label_col="ground_truth", normalcells="healthy plasma", ds_col="disease_stage", ds_colors=['cornflowerblue', '#F1CE46', '#DC7209', '#880B0B'], ylabel='mean activity', ncols=1, ptsize=6, custom_ylim=None, sharey=False, sharex=False, figsize=None, legend_fontsize="small", filename=None, dpi=150):
     #sigs_to_plot: a list of signatures or genes to plot. must contain a subset of the values in the facet_col column of your summary_df
     #facet_col: column name in summary_df which defines the facets
     #value_col: column name in summary_df for column that contained values that will be plotted
@@ -969,7 +969,7 @@ def plot_per_patient_healthymalig(summary_df, things_to_plot, facet_col='signatu
         figsize = (10,5*len(things_to_plot))
     nrows = int(np.ceil(len(things_to_plot)/ncols))
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, sharey=False, sharex=False, figsize=figsize, squeeze=False)
-    plt.xticks(np.arange(0, len(summary_df[person_col].drop_duplicates())+3, 1.0), rotation=90) #additional 4 (or 3 if now distinction b.w SMMl/h) blank spaces b/w disease stages
+    plt.xticks(np.arange(0, len(summary_df[sample_col].drop_duplicates())+3, 1.0), rotation=90) #additional 4 (or 3 if now distinction b.w SMMl/h) blank spaces b/w disease stages
     plt.subplots_adjust(hspace=0.3) #increase vertical space between plots otherwise labels may overlap
     if custom_ylim is not None:
         plt.ylim(custom_ylim)
@@ -1015,7 +1015,7 @@ def plot_per_patient_healthymalig(summary_df, things_to_plot, facet_col='signatu
             ax.set_title(sig) #IDK why i cant get this to work!! this_sig_df.title[0])
             myxlabels = []
             for d in this_sig_df[ds_col].drop_duplicates():
-                myxlabels+=list(this_sig_df[this_sig_df[ds_col]==d][person_col].drop_duplicates())
+                myxlabels+=list(this_sig_df[this_sig_df[ds_col]==d][sample_col].drop_duplicates())
                 myxlabels+=['']
             myxlabels=myxlabels[:-1]
             ax.set_xticklabels(myxlabels)        
@@ -1032,74 +1032,74 @@ def plot_per_patient_healthymalig(summary_df, things_to_plot, facet_col='signatu
             if np.all(pd.isna(this_sig_df.stderror)):
                 print("WARNING: plotting {} without error bars".format(sig))
                 
-                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MGUS")][person_col]], 
+                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MGUS")][sample_col]], 
                             y=this_sig_df.loc[(this_sig_df[ds_col]=="MGUS"),value_col], 
                             yerr=None,
                             fmt='o', color=ds_colors[1], ecolor=ds_colors[1], elinewidth=2, capsize=0);
 
-                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="SMM")][person_col]], 
+                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="SMM")][sample_col]], 
                             y=this_sig_df.loc[(this_sig_df[ds_col]=="SMM"),value_col], 
                             yerr=None,
                             fmt='o', color=ds_colors[2], ecolor=ds_colors[2], elinewidth=2, capsize=0);
 
-                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MM")][person_col]], 
+                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MM")][sample_col]], 
                             y=this_sig_df.loc[(this_sig_df[ds_col]=="MM"),value_col], 
                             yerr=None,
                             fmt='o', color=ds_colors[3], ecolor=ds_colors[3], elinewidth=2, capsize=0);
 
                 #plot healthy points in blue
-                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df.ground_truth=="healthy plasma")][person_col]], 
-                            y=this_sig_df.loc[(this_sig_df.ground_truth=="healthy plasma"),value_col], 
+                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[label_col]==normalcells)][sample_col]], 
+                            y=this_sig_df.loc[(this_sig_df[label_col]==normalcells),value_col], 
                             yerr=None,
                             fmt='o', color=ds_colors[0], ecolor=ds_colors[0], elinewidth=2, capsize=0);
             
             else: #plot with error bars
                 
-                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MGUS")][person_col]], 
+                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MGUS")][sample_col]], 
                             y=this_sig_df.loc[(this_sig_df[ds_col]=="MGUS"),value_col], 
                             yerr=this_sig_df[(this_sig_df[ds_col]=="MGUS")].stderror, 
                             fmt='o', color=ds_colors[1], ecolor=ds_colors[1], elinewidth=2, capsize=0);
 
-                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="SMM")][person_col]], 
+                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="SMM")][sample_col]], 
                             y=this_sig_df.loc[(this_sig_df[ds_col]=="SMM"),value_col], 
                             yerr=this_sig_df[(this_sig_df[ds_col]=="SMM")].stderror, 
                             fmt='o', color=ds_colors[2], ecolor=ds_colors[2], elinewidth=2, capsize=0);
 
-                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MM")][person_col]], 
+                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MM")][sample_col]], 
                             y=this_sig_df.loc[(this_sig_df[ds_col]=="MM"),value_col], 
                             yerr=this_sig_df[(this_sig_df[ds_col]=="MM")].stderror, 
                             fmt='o', color=ds_colors[3], ecolor=ds_colors[3], elinewidth=2, capsize=0);
 
                 #plot healthy points in blue
-                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df.ground_truth=="healthy plasma")][person_col]], 
-                            y=this_sig_df.loc[(this_sig_df.ground_truth=="healthy plasma"),value_col], 
-                            yerr=this_sig_df[(this_sig_df.ground_truth=="healthy plasma")].stderror, 
+                ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[label_col]==normalcells)][sample_col]], 
+                            y=this_sig_df.loc[(this_sig_df[label_col]==normalcells),value_col], 
+                            yerr=this_sig_df[(this_sig_df[label_col]==normalcells)].stderror, 
                             fmt='o', color=ds_colors[0], ecolor=ds_colors[0], elinewidth=2, capsize=0);
 
             # 2. draw line connecting the points
             #find ppl who have both healthy and malignant cells (same for every facet)
-            ppl_who_need_lines = this_sig_df[[person_col,'ground_truth']].drop_duplicates().groupby(person_col).size()
+            ppl_who_need_lines = this_sig_df[[sample_col,label_col]].drop_duplicates().groupby(sample_col).size()
             ppl_who_need_lines = ppl_who_need_lines.index[ppl_who_need_lines>1]
 
             for p in ppl_who_need_lines:
-                ax.plot([tmp_person_xaxis_loc_dict[p],tmp_person_xaxis_loc_dict[p]], this_sig_df[this_sig_df[person_col]==p].sort_values("group")[value_col], linestyle="--", color='lightgray', zorder=1)
+                ax.plot([tmp_person_xaxis_loc_dict[p],tmp_person_xaxis_loc_dict[p]], this_sig_df[this_sig_df[sample_col]==p].sort_values("group")[value_col], linestyle="--", color='lightgray', zorder=1)
 
             ## add horizontal bars over each disease stage
             barheight=ax.get_ylim()[1]
             ax.axhline(y=barheight, 
                        xmin=0+1/(max(tmp_person_xaxis_loc_dict.values())+2),
-                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='NBM'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='NBM'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
                        color=ds_colors[0]) #over NBM
             ax.axhline(y=barheight, 
-                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MGUS'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
-                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MGUS'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MGUS'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MGUS'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
                        color=ds_colors[1]) #
             ax.axhline(y=barheight, 
-                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='SMM'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
-                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='SMM'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='SMM'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='SMM'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
                        color=ds_colors[2]) #
             ax.axhline(y=barheight, 
-                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MM'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MM'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
                        xmax=1-1/(max(tmp_person_xaxis_loc_dict.values())+2),
                        color=ds_colors[3]) #
 
@@ -1110,7 +1110,7 @@ def plot_per_patient_healthymalig(summary_df, things_to_plot, facet_col='signatu
         plt.savefig(filename, bbox_inches="tight", dpi=dpi)
 
 #adjusted function to work on Amit data (eg. "Normal" instead of "NBM")
-def plot_per_patient_healthymalig_Amit(summary_df, things_to_plot, facet_col='signature', value_col='mean_activity', person_col='person', ds_col="disease_stage", ds_colors=['cornflowerblue', '#F1CE46', '#DC7209', '#880B0B'], ylabel='mean activity', ncols=1, ptsize=6, sharey=False, sharex=False, figsize=None, filename=None):
+def plot_per_patient_healthymalig_Amit(summary_df, things_to_plot, facet_col='signature', value_col='mean_activity', sample_col='person', ds_col="disease_stage", ds_colors=['cornflowerblue', '#F1CE46', '#DC7209', '#880B0B'], ylabel='mean activity', ncols=1, ptsize=6, sharey=False, sharex=False, figsize=None, filename=None):
     #sigs_to_plot: a list of signatures or genes to plot. must contain a subset of the values in the facet_col column of your summary_df
     #facet_col: column name in summary_df which defines the facets
     #value_col: column name in summary_df for column that contained values that will be plotted
@@ -1122,7 +1122,7 @@ def plot_per_patient_healthymalig_Amit(summary_df, things_to_plot, facet_col='si
         figsize = (10,5*len(things_to_plot))
     nrows = int(np.ceil(len(things_to_plot)/ncols))
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, sharey=False, sharex=False, figsize=figsize, squeeze=False)
-    plt.xticks(np.arange(0, len(summary_df[person_col].drop_duplicates())+3, 1.0), rotation=90) #additional 4 (or 3 if now distinction b.w SMMl/h) blank spaces b/w disease stages
+    plt.xticks(np.arange(0, len(summary_df[sample_col].drop_duplicates())+3, 1.0), rotation=90) #additional 4 (or 3 if now distinction b.w SMMl/h) blank spaces b/w disease stages
     plt.subplots_adjust(hspace=0.3) #increase vertical space between plots otherwise labels may overlap
 
     #plot each signature on a subplot
@@ -1163,7 +1163,7 @@ def plot_per_patient_healthymalig_Amit(summary_df, things_to_plot, facet_col='si
             ax.set_title(sig) #IDK why i cant get this to work!! this_sig_df.title[0])
             myxlabels = []
             for d in this_sig_df[ds_col].drop_duplicates():
-                myxlabels+=list(this_sig_df[this_sig_df[ds_col]==d][person_col].drop_duplicates())
+                myxlabels+=list(this_sig_df[this_sig_df[ds_col]==d][sample_col].drop_duplicates())
                 myxlabels+=['']
             myxlabels=myxlabels[:-1]
             ax.set_xticklabels(myxlabels)        
@@ -1176,51 +1176,51 @@ def plot_per_patient_healthymalig_Amit(summary_df, things_to_plot, facet_col='si
             # within each disease stage, order by decreasing values (malignant) (perhaps should be able to choose increasing or decreasing)
             # color by malignant vs. healthy
             # plot malignant points in shades of orange, increasing in intensity with disease stage
-            ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MGUS")][person_col]], 
+            ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MGUS")][sample_col]], 
                         y=this_sig_df.loc[(this_sig_df[ds_col]=="MGUS"),value_col], 
                         yerr=this_sig_df[(this_sig_df[ds_col]=="MGUS")].stderror, 
                         fmt='o', color=ds_colors[1], ecolor=ds_colors[1], elinewidth=2, capsize=0);
 
-            ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="SMM")][person_col]], 
+            ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="SMM")][sample_col]], 
                         y=this_sig_df.loc[(this_sig_df[ds_col]=="SMM"),value_col], 
                         yerr=this_sig_df[(this_sig_df[ds_col]=="SMM")].stderror, 
                         fmt='o', color=ds_colors[2], ecolor=ds_colors[2], elinewidth=2, capsize=0);
 
-            ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MM")][person_col]], 
+            ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df[ds_col]=="MM")][sample_col]], 
                         y=this_sig_df.loc[(this_sig_df[ds_col]=="MM"),value_col], 
                         yerr=this_sig_df[(this_sig_df[ds_col]=="MM")].stderror, 
                         fmt='o', color=ds_colors[3], ecolor=ds_colors[3], elinewidth=2, capsize=0);
 
             #plot healthy points in blue
-            ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df.ground_truth=="healthy plasma")][person_col]], 
+            ax.errorbar(x=[tmp_person_xaxis_loc_dict[p] for p in this_sig_df[(this_sig_df.ground_truth=="healthy plasma")][sample_col]], 
                         y=this_sig_df.loc[(this_sig_df.ground_truth=="healthy plasma"),value_col], 
                         yerr=this_sig_df[(this_sig_df.ground_truth=="healthy plasma")].stderror, 
                         fmt='o', color=ds_colors[0], ecolor=ds_colors[0], elinewidth=2, capsize=0);
 
             # 2. draw line connecting the points
             #find ppl who have both healthy and malignant cells (same for every facet)
-            ppl_who_need_lines = this_sig_df[[person_col,'ground_truth']].drop_duplicates().groupby(person_col).size()
+            ppl_who_need_lines = this_sig_df[[sample_col,'ground_truth']].drop_duplicates().groupby(sample_col).size()
             ppl_who_need_lines = ppl_who_need_lines.index[ppl_who_need_lines>1]
 
             for p in ppl_who_need_lines:
-                ax.plot([tmp_person_xaxis_loc_dict[p],tmp_person_xaxis_loc_dict[p]], this_sig_df[this_sig_df[person_col]==p].sort_values("group")[value_col], linestyle="--", color='lightgray', zorder=1)
+                ax.plot([tmp_person_xaxis_loc_dict[p],tmp_person_xaxis_loc_dict[p]], this_sig_df[this_sig_df[sample_col]==p].sort_values("group")[value_col], linestyle="--", color='lightgray', zorder=1)
 
             ## add horizontal bars over each disease stage
             barheight=ax.get_ylim()[1]
             ax.axhline(y=barheight, 
                        xmin=0+1/(max(tmp_person_xaxis_loc_dict.values())+2),
-                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='Normal'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='Normal'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
                        color=ds_colors[0]) #over NBM
             ax.axhline(y=barheight, 
-                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MGUS'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
-                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MGUS'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MGUS'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MGUS'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
                        color=ds_colors[1]) 
             ax.axhline(y=barheight, 
-                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='SMM'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
-                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='SMM'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='SMM'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmax=(1+max([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='SMM'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
                        color=ds_colors[2]) #
             ax.axhline(y=barheight, 
-                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MM'][person_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
+                       xmin=(1+min([tmp_person_xaxis_loc_dict[p] for p in this_sig_df[this_sig_df[ds_col]=='MM'][sample_col]]))/(max(tmp_person_xaxis_loc_dict.values())+2), 
                        xmax=1-1/(max(tmp_person_xaxis_loc_dict.values())+2),
                        color=ds_colors[3]) #
 
