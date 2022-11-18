@@ -1,13 +1,11 @@
 # Boiarsky-etal-2022
-Code to reproduce methods &amp; results from Boiarsky et. al. 2022
+Code to reproduce methods &amp; results from Boiarsky et al., _Nature Communications_, 2022
 
-For now, please cite our preprint, available on medRxiv!
+If you use our data or analysis in your research, please cite our research article!
 ```
-Single Cell Characterization of Myeloma and its Precursor Conditions Reveals Transcriptional Signatures of Early Tumorigenesis
-Rebecca Boiarsky, Nicholas J. Haradhvala, Jean-Baptiste Alberge, Romanos Sklavenitis-Pistofidis, Tarek H Mouhieddine, 
-Oksana Zavidij, Ming-Chieh Shih, Danielle Firer, Mendy Miller, Habib El-Khoury, Shankara K. Anand, François Aguet, 
-David Sontag, Irene M. Ghobrial, Gad Getz
-medRxiv 2022.02.01.22270128; doi: https://doi.org/10.1101/2022.02.01.22270128
+Boiarsky, R., Haradhvala, N.J., Alberge, JB. et al. Single cell characterization of myeloma and its precursor 
+conditions reveals transcriptional signatures of early tumorigenesis. Nat Commun 13, 7040 (2022). 
+https://doi.org/10.1038/s41467-022-33944-z
 ```
 
 ## System Requirements
