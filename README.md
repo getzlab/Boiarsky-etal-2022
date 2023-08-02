@@ -1,5 +1,5 @@
 # Boiarsky-etal-2022
-Code to reproduce methods &amp; results from Boiarsky et al., _Nature Communications_, 2022
+Code to reproduce methods &amp; results from [Boiarsky et al., _Nature Communications_, 2022](https://www.nature.com/articles/s41467-022-33944-z)
 
 If you use our data or analysis in your research, please cite our research article!
 ```
